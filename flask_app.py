@@ -45,7 +45,7 @@ def build_faiss_index(texts):
     return faiss_index, sentence_embeddings
 
 # 设置你的根目录路径，包含多个txt文件
-root_directory = '/Users/MacBook/Desktop/广东海事局'
+root_directory = '/haishi'
 texts, file_paths = load_txt_from_multiple_directories(root_directory)
 faiss_index, sentence_embeddings = build_faiss_index(texts)
 
