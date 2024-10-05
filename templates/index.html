@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF 文件模糊搜索</title>
+</head>
+<body>
+    <h1>PDF 文件模糊搜索</h1>
+
+    <!-- 搜索表单 -->
+    <form action="/search" method="GET">
+        <input type="text" name="query" placeholder="输入搜索关键词" required>
+        <button type="submit">搜索</button>
+    </form>
+
+    {% if results %}
+        <h2>搜索结果:</h2>
+        <ul>
+            {% for result in results %}
+                <li>
+                    <strong>文件路径:</strong> {{ result.file_path }}<br>
+                    <strong>相似度 (距离):</strong> {{ result.distance }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% elif query %}
+        <p>没有找到与 "{{ query }}" 相关的结果。</p>
+    {% endif %}
+
+</body>
+</html>
