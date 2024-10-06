@@ -1,32 +1,71 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF 文件模糊搜索</title>
+    <title>PDF 搜索</title>
+    <style>
+        /* 设置双栏布局 */
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .search-column {
+            width: 48%;
+        }
+    </style>
 </head>
 <body>
-    <h1>PDF 文件模糊搜索</h1>
+    <h1>PDF 检索系统</h1>
+    
+    <div class="container">
+        <!-- 左侧 快速检索 -->
+        <div class="search-column">
+            <h2>快速搜索</h2>
+            <form action="/quick_search" method="get">
+                <input type="text" name="query" placeholder="输入搜索关键词">
+                <button type="submit">搜索</button>
+            </form>
 
-    <!-- 搜索表单 -->
-    <form action="/search" method="GET">
-        <input type="text" name="query" placeholder="输入搜索关键词" required>
-        <button type="submit">搜索</button>
-    </form>
-
-    {% if results %}
-        <h2>搜索结果:</h2>
-        <ul>
-            {% for result in results %}
+            {% if quick_results %}
+            <ul>
+                {% for result in quick_results %}
                 <li>
-                    <strong>文件路径:</strong> {{ result.file_path }}<br>
-                    <strong>相似度 (距离):</strong> {{ result.distance }}
+                    <p>文件名称: {{ result.file_name }}</p>
+                    <p>相似度距离: {{ result.distance }}</p>
+                    <!-- 显示PDF链接 -->
+                    <a href="/pdf/{{ result.pdf_path }}" target="_blank">打开 PDF</a>
                 </li>
-            {% endfor %}
-        </ul>
-    {% elif query %}
-        <p>没有找到与 "{{ query }}" 相关的结果。</p>
-    {% endif %}
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>未找到相关结果</p>
+            {% endif %}
+        </div>
 
+        <!-- 右侧 精确检索 -->
+        <div class="search-column">
+            <h2>精确搜索</h2>
+            <form action="/precise_search" method="get">
+                <input type="text" name="query" placeholder="输入搜索关键词">
+                <button type="submit">搜索</button>
+            </form>
+
+            {% if precise_results %}
+            <ul>
+                {% for result in precise_results %}
+                <li>
+                    <p>PDF 文件: {{ result.pdf_name }}</p>
+                    <p>相似度距离: {{ result.distance }}</p>
+                    <!-- 将页码从 0000 格式转换为从 1 开始的页码 -->
+                    <a href="/pdf/{{ result.pdf_path }}#page={{ result.page_num|int + 1 }}" target="_blank">打开 PDF 的第 {{ result.page_num|int + 1 }} 页</a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>未找到相关结果</p>
+            {% endif %}
+        </div>
+    </div>
 </body>
 </html>
