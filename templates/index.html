@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF 搜索</title>
+    <title> </title>
     <style>
         /* 设置双栏布局 */
         .container {
@@ -16,7 +16,7 @@
     </style>
 </head>
 <body>
-    <h1>PDF 检索系统</h1>
+    <h1>航海海规检索系统</h1>
     
     <div class="container">
         <!-- 左侧 快速检索 -->
@@ -32,7 +32,7 @@
                 {% for result in quick_results %}
                 <li>
                     <p>文件名称: {{ result.file_name }}</p>
-                    <p>相似度距离: {{ result.distance }}</p>
+                    <p>内容: {{ result.summary }}</p>
                     <!-- 显示PDF链接 -->
                     <a href="/pdf/{{ result.pdf_path }}" target="_blank">打开 PDF</a>
                 </li>
@@ -56,7 +56,6 @@
                 {% for result in precise_results %}
                 <li>
                     <p>PDF 文件: {{ result.pdf_name }}</p>
-                    <p>相似度距离: {{ result.distance }}</p>
                     <!-- 将页码从 0000 格式转换为从 1 开始的页码 -->
                     <a href="/pdf/{{ result.pdf_path }}#page={{ result.page_num|int + 1 }}" target="_blank">打开 PDF 的第 {{ result.page_num|int + 1 }} 页</a>
                 </li>

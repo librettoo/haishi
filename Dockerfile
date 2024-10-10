@@ -1,17 +1,44 @@
-# Use a base Python image
-FROM python:3.12
+# syntax=docker/dockerfile:1
 
-# Set the working directory inside the container
+ARG PYTHON_VERSION=3.12.2
+FROM python:${PYTHON_VERSION}-slim as base
+
+# Prevents Python from writing pyc files.
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Set Hugging Face cache directory to a writable location
+ENV HF_HOME=/app/cache
+
 WORKDIR /app
 
-# Copy the entire project directory into the container
-COPY . /app
+# Create a cache directory for Hugging Face models
+RUN mkdir -p /app/cache && chmod 777 /app/cache
 
-# Install dependencies from requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+# Create a non-privileged user to run the app
+ARG UID=10001
+RUN adduser \
+    --disabled-password \
+    --gecos "" \
+    --home "/app" \
+    --shell "/sbin/nologin" \
+    --no-create-home \
+    --uid "${UID}" \
+    appuser
 
-# Expose the port for the Flask app
+# Download dependencies
+COPY requirements.txt .
+RUN --mount=type=cache,target=/root/.cache/pip \
+    python -m pip install -r requirements.txt
+
+# Switch to the non-privileged user
+USER appuser
+
+# Copy the source code
+COPY . .
+
+# Expose the port
 EXPOSE 8000
 
-# Run the Flask app using Gunicorn
-CMD ["gunicorn", "-b", "0.0.0.0:8000", "app:app"]
+# Run the application
+CMD gunicorn 'app:app' --bind=0.0.0.0:8000

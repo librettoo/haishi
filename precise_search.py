@@ -73,7 +73,6 @@ def precise_search(query_text, root_directory, top_n=5):
             precise_results.append({
                 "pdf_name": os.path.basename(pdf),
                 "page_num": page_num,
-                "distance": distance,
                 "pdf_path": pdf
             })
     

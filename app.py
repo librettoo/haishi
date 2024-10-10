@@ -1,7 +1,10 @@
 import os
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 from flask import Flask, request, render_template, send_from_directory
 from quick_search import quick_search_files
 from precise_search import precise_search
+
+
 
 app = Flask(__name__)
 
@@ -38,7 +41,8 @@ def precise_search_route():
         return render_template('index.html', precise_results=None)
 
     # 设置根目录路径
-    root_directory = '/Users/MacBook/Desktop/广东海事局/data'
+    current_directory = os.getcwd()  # 获取当前工作目录
+    root_directory = os.path.join(current_directory, 'data')  # 构建绝对路径
     
     # 执行精确搜索
     precise_results = precise_search(query, root_directory)
@@ -59,5 +63,5 @@ def download_pdf(subpath, filename):
     # 确保文件在指定的目录下，返回文件
     return send_from_directory(directory, filename)
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=9000, debug=True)
